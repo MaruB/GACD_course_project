@@ -85,28 +85,21 @@ filtered_dataset <- merged_datasets[, means_and_stds_indexes]
 filtered_dataset_plus <- merged_datasets[, c(1,2,means_and_stds_indexes)]
 
 
-# iris %>% group_by(Species) %>% summarise(…)
-by_subject <- filtered_dataset_plus %>% group_by(subject) %>% 
-    summarise_each(funs(mean)) %>% select(-activity)
+# summarize by subject and activity
 
-by_activity <- filtered_dataset_plus %>% group_by(activity) %>% 
-    summarise_each(funs(mean)) %>% select(-subject)
-
+by_both <- filtered_dataset_plus %>% group_by(subject, activity) %>% 
+  summarise_each(funs(mean))
 # assign matching colnames
 
-colnames(by_subject)[1] <- 'summarizingFactor_subject/activity'
-colnames(by_activity)[1] <- 'summarizingFactor_subject/activity'
-
-
-by_subject_and_activity <- rbind(by_subject, by_activity)
 
 # create an output directory in your working directory
 dir.create('output')
 # write the required file output into the output folder
 
-write.table(by_subject_and_activity, 'output/output_table.csv', row.names = FALSE,
-            col.names = TRUE, quote = FALSE, sep = '\t')
+write.table(by_both, 'output/output_table.csv', row.names = FALSE,
+            col.names = TRUE, quote = FALSE, sep = ',')
 
 # this is the fifth point of the assgnment: 'From the data set in step 4,
 # creates a second, independent tidy data set with the average of each variable 
 # for each activity and each subject.'
+
